@@ -4,6 +4,17 @@ AI-powered browser extension providing invisible, contextual autocorrection with
 
 Advanced rebuild of the initial prototype (https://github.com/JAMPANIKOMAL/invisible-autocorrect-extension) using a character-level sequence-to-sequence neural network instead of frequency dictionaries.
 
+## Project evolution
+
+This is Phase 2 of a 4-part exploration into automatic typing correction.
+It successfully trains a real seq2seq model (below), but integrating it
+*inside the browser extension sandbox* proved too heavy — see Known
+Limitations. That specific problem motivated the next phase,
+[Type-Correcter-Ai](https://github.com/JampaniKomal/Type-Correcter-Ai),
+which moved the same trained model into a Flask web app instead, and
+eventually [AI_Corrector_Project](https://github.com/JampaniKomal/AI_Corrector_Project),
+a full cross-application desktop corrector.
+
 ## Features
 
 - **Invisible Correction:** No popups or underlines. Typos are corrected instantly on spacebar press.
@@ -88,9 +99,21 @@ Ghost-Type-Corrector/
 | RTX 3050    | 7 min         | 3 MB       | 60-70%   |
 | Intel i7    | 50 min        | 3 MB       | 60-70%   |
 
+## Known limitations
+
+- **The extension's browser-side inference is incomplete.**
+  `extension/sandbox.html` loads `js/lib/tf.min.js` (TensorFlow.js), but
+  that file was never committed and there's no fetch/build step that
+  produces it — the extension as checked in cannot actually run inference
+  in the browser. The model-training pipeline (`ai_model/`) itself is real
+  and works; only the in-browser deployment half is unfinished. This is
+  the specific limitation documented in this project's successor,
+  [Type-Correcter-Ai](https://github.com/JampaniKomal/Type-Correcter-Ai),
+  which moved the same trained model to a Flask web app instead of
+  fighting the browser sandbox further.
+
 ## Acknowledgements
 
-- Development assisted by Google Gemini
 - Dataset: Leipzig Corpora Collection, Leipzig University
 
 ## License
