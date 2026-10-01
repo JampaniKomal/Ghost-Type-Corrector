@@ -52,6 +52,12 @@ def test_leaves_non_alphabetic_tokens_alone(corrector):
         assert corrector.correct(token) == token
 
 
+def test_leaves_very_short_words_alone(corrector):
+    # "a" and "i" are real words the dictionary omits; they must not be "fixed".
+    for token in ["a", "i", "A", "I", "an", "to", "of"]:
+        assert corrector.correct(token) == token
+
+
 def test_case_is_handled_by_lowercasing(corrector):
     # The model is lower-case; correct() lower-cases before gating. (The browser
     # extension restores the original case separately.)

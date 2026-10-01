@@ -129,7 +129,10 @@ class Corrector:
         unknown word is replaced by the highest-ranked real-word candidate, or
         left as-is if none of the candidates are in the dictionary."""
         lower = word.lower()
-        if not lower.isalpha() or lower in self.dictionary:
+        # Leave very short words alone: "a" and "i" are real words the dictionary
+        # omits (it keeps only words of length >= 2), and correcting one- or
+        # two-letter tokens is all risk and no reward.
+        if len(lower) < 3 or not lower.isalpha() or lower in self.dictionary:
             return word
         for cand in self.candidates(lower):
             if cand != lower and cand in self.dictionary:

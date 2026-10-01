@@ -138,7 +138,9 @@
 
     correct(word) {
       const lower = word.toLowerCase();
-      if (!/^[a-z]+$/.test(lower) || this.dictionary.has(lower)) return word;
+      // Leave very short words alone ("a", "i", and 2-letter tokens): the
+      // dictionary omits length-1 words, and correcting them is all risk.
+      if (lower.length < 3 || !/^[a-z]+$/.test(lower) || this.dictionary.has(lower)) return word;
       for (const cand of this.candidates(lower)) {
         if (cand !== lower && this.dictionary.has(cand)) return cand;
       }
