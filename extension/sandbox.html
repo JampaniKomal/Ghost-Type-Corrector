@@ -6,8 +6,9 @@
     <title>Ghost Type Corrector AI Sandbox</title>
 </head>
 <body>
-    <script src="js/lib/tf.min.js"></script>
-    
+    <!-- Plain-JS inference engine, then the sandbox message handler.
+         No TensorFlow.js runtime is loaded. -->
+    <script src="js/inference.js"></script>
     <script src="js/sandbox_logic.js"></script>
 </body>
 </html>

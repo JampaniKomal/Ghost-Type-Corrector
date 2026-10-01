@@ -33,11 +33,11 @@
     {
       "resources": [
         "sandbox.html",
-        "js/lib/tf.min.js",
+        "js/inference.js",
         "js/sandbox_logic.js",
-        "data/tokenizer_config.json",
-        "model/encoder/*",
-        "model/decoder/*"
+        "model/weights.json",
+        "model/tokenizer_config.json",
+        "model/dictionary.txt"
       ],
       "matches": ["<all_urls>"]
     }

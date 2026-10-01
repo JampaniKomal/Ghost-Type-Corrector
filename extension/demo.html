@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ghost Type Corrector - demo</title>
+<style>
+  :root { color-scheme: light dark; --bg:#0f1420; --fg:#e8ecf4; --mut:#9aa6bd;
+          --card:#171e2e; --acc:#6ea8fe; --good:#7ee2b8; --line:#273145; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); min-height:100vh;
+         font:16px/1.5 ui-sans-serif,system-ui,Segoe UI,Roboto,sans-serif;
+         display:flex; justify-content:center; padding:32px 16px; }
+  .wrap { width:100%; max-width:720px; }
+  h1 { font-size:1.5rem; margin:0 0 4px; }
+  p.sub { color:var(--mut); margin:0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; margin-bottom:16px; }
+  textarea { width:100%; min-height:120px; resize:vertical; background:#0c111b; color:var(--fg);
+             border:1px solid var(--line); border-radius:8px; padding:12px; font-size:1.05rem; }
+  .status { font-size:.9rem; color:var(--mut); margin-top:8px; }
+  .log { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.92rem; }
+  .log div { padding:3px 0; border-bottom:1px solid var(--line); }
+  .log .old { color:var(--mut); text-decoration:line-through; }
+  .log .new { color:var(--good); font-weight:600; }
+  .hint { color:var(--mut); font-size:.85rem; }
+  code { background:#0c111b; padding:1px 6px; border-radius:5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ghost Type Corrector</h1>
+  <p class="sub">Character-level seq2seq autocorrect, running entirely in your browser &mdash; no server, no TensorFlow.js.</p>
+
+  <div class="card">
+    <textarea id="box" placeholder="Type here, then press space. Try: teh recieve beleive wrld langauge thsi" autofocus></textarea>
+    <div class="status" id="status">Loading model&hellip;</div>
+    <p class="hint">Corrections happen on <b>space</b>, the same way the extension works. Known words are never changed.</p>
+  </div>
+
+  <div class="card">
+    <strong>Corrections made</strong>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script src="js/inference.js"></script>
+<script>
+(async function () {
+  const box = document.getElementById('box');
+  const status = document.getElementById('status');
+  const log = document.getElementById('log');
+  let corrector = null;
+  try {
+    corrector = await GTCInference.load('model/');
+    status.textContent = 'Model loaded. Start typing.';
+  } catch (e) {
+    status.textContent = 'Failed to load model: ' + e.message;
+    return;
+  }
+  function correctLastWord() {
+    const words = box.value.trimEnd().split(/\s+/);
+    const last = words[words.length - 1];
+    if (!last) return;
+    const fixed = corrector.correct(last);
+    if (fixed !== last) {
+      words[words.length - 1] = fixed;
+      box.value = words.join(' ') + ' ';
+      const row = document.createElement('div');
+      row.innerHTML = `<span class="old">${last}</span> &rarr; <span class="new">${fixed}</span>`;
+      log.prepend(row);
+    }
+  }
+  box.addEventListener('keyup', (e) => { if (e.key === ' ') correctLastWord(); });
+
+  // Self-running showcase (for screenshots / a quick look): load demo.html#showcase
+  if (location.hash === '#showcase') {
+    for (const w of ['teh', 'recieve', 'beleive', 'wrld', 'langauge', 'thsi']) {
+      box.value += w + ' ';
+      correctLastWord();
+    }
+  }
+})();
+</script>
+</body>
+</html>
