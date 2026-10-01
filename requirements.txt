@@ -1,0 +1,5 @@
+# Training the model (ai_model/src/02_train_model.py) needs TensorFlow.
+# Running the model (ai_model/src/inference.py) needs only NumPy - the browser
+# runs it with no dependencies at all.
+numpy>=1.23,<2
+tensorflow-cpu==2.10.0 ; python_version < "3.11"
